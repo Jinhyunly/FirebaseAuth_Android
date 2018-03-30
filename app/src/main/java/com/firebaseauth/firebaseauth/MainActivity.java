@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
     private GoogleApiClient mGoogleApiClient;
     private FirebaseAuth mAuth;
     private CallbackManager mCallbackManager;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +84,22 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
                 // ...
             }
         });
+
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    // User is signed in
+                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    // User is signed out
+                }
+                // ...
+            }
+        };
     }
     private void handleFacebookAccessToken(AccessToken token) {
 
@@ -101,7 +119,6 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
                     }
                 });
     }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -136,7 +153,6 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
                         if (!task.isSuccessful()) {
 
                         }else {
-
                             Toast.makeText(MainActivity.this, acct.getDisplayName(), Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -145,6 +161,21 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        
+
+    }
+
+    //귀를 달아주고
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+    //귀를 떼준다
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
     }
 }
