@@ -21,7 +21,7 @@ public class SplashActivity extends AppCompatActivity {
         intro_mWebView.setWebViewClient(new WebViewClient());
         mWebSettings = intro_mWebView.getSettings();
         mWebSettings.setJavaScriptEnabled(true);
-        intro_mWebView.loadUrl("http://www.daum.net"); // intro view
+        //intro_mWebView.loadUrl("http://"); //intro URL
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -32,8 +32,7 @@ public class SplashActivity extends AppCompatActivity {
                 finish(); //레이아웃이 쌓이지 않게 종료해 줍니다.
 
             }
-        }, 3000); //2000은 2초를 의미합니다.
-
+        }, 2000); //2000은 2초
 
     }
 }

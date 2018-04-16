@@ -24,6 +24,14 @@ import android.widget.TextView;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.io.IOException;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -33,11 +41,35 @@ public class HomeActivity extends AppCompatActivity
     private WebSettings mWebSettings;
     private FirebaseAuth auth;
 
+    Retrofit retrofit;
+    ApiService apiService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         auth = FirebaseAuth.getInstance();
+
+        //retrofit
+        retrofit = new Retrofit.Builder().baseUrl(ApiService.API_URL).build();
+        apiService = retrofit.create(ApiService.class);
+
+        Call<ResponseBody> comment = apiService.getCommnet(1);
+        comment.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try{
+                    Log.i("Test1", response.body().string());
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -67,7 +99,8 @@ public class HomeActivity extends AppCompatActivity
         mWebSettings.setJavaScriptEnabled(true);
         mWebSettings.setBuiltInZoomControls(true);
         mWebSettings.setSupportZoom(true);
-        mWebView.loadUrl("http://www.naver.com"); // 로그인후 앱의 첫 화면
+        //mWebView.loadUrl("http://" ); // 로그인후 앱의 첫 화면
+
 
         nameTextView.setText(auth.getCurrentUser().getDisplayName());
         emailTextVIew.setText(auth.getCurrentUser().getEmail());
